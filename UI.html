@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Q&A Input UI</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f9f9f9, #e9eff5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      resize: vertical;
+      font-size: 14px;
+    }
+
+    textarea:focus,
+    input:focus {
+      outline: none;
+      border-color: #008cff;
+      box-shadow: 0 0 4px rgba(0, 140, 255, 0.3);
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #008cff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0070cc;
+    }
+
+    #status {
+      margin-top: 15px;
+      text-align: center;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Insert Q&A Pair</h2>
+    <form id="qa-form">
+      <label for="id">ID:</label>
+      <input type="number" id="id" name="id" readonly>
+
+      <label for="question">Question:</label>
+      <textarea id="question" name="question" rows="3" required></textarea>
+
+      <label for="answer">Answer:</label>
+      <textarea id="answer" name="answer" rows="3" required></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script type="module">
+    const SUPABASE_URL = 'https://kekgqjrueyoxlasfnnhl.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtla2dxanJ1ZXlveGxhc2ZubmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyODA4MTYsImV4cCI6MjA1OTg1NjgxNn0.SXyJzx5N8AqxSSFD858y-cSB5wUH7mmC4oXluJlZA6g';
+
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const idInput = document.getElementById("id");
+    const form = document.getElementById("qa-form");
+    const statusText = document.getElementById("status");
+
+    async function getNextId() {
+      const { data, error } = await supabase
+        .from("qa_pairs")
+        .select("id")
+        .order("id", { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error("Error fetching ID:", error);
+        statusText.textContent = "Error getting ID.";
+        statusText.style.color = 'red';
+        return;
+      }
+
+      const nextId = data.length > 0 ? data[0].id + 1 : 1;
+      idInput.value = nextId;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = parseInt(idInput.value);
+      const question = document.getElementById("question").value.trim();
+      const answer = document.getElementById("answer").value.trim();
+
+      if (!question || !answer) {
+        statusText.textContent = "Please fill both fields.";
+        statusText.style.color = 'red';
+        return;
+      }
+
+      const { error } = await supabase.from("qa_pairs").insert([{ id, question, answer }]);
+
+      if (error) {
+        console.error("Insert error:", error);
+        statusText.textContent = "Failed to insert data.";
+        statusText.style.color = 'red';
+      } else {
+        statusText.textContent = "Inserted successfully!";
+        statusText.style.color = 'green';
+        form.reset();
+        getNextId();
+      }
+    });
+
+    getNextId();
+  </script>
+</body>
+</html>
