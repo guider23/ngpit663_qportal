@@ -1,106 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Q&A Input UI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insert Q&A</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #f9f9f9, #e9eff5);
+      font-family: 'Manrope', sans-serif;
+      background: radial-gradient(circle at top left, #f1f5f9, #e0f2fe);
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: #0f172a;
+    }
+
+    .blur-circle {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(180px);
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    .blur1 {
+      background: #93c5fd;
+      top: -200px;
+      left: -150px;
+    }
+
+    .blur2 {
+      background: #c4b5fd;
+      bottom: -150px;
+      right: -200px;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    .card {
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 500px;
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(50px);
     }
 
-    h2 {
-      margin-top: 0;
+    .glass-card h2 {
       text-align: center;
-      color: #333;
+      font-size: 2rem;
+      margin-bottom: 25px;
+      opacity: 0;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-bottom: 6px;
       font-weight: 600;
-      color: #444;
+      font-size: 0.95rem;
+      opacity: 0;
     }
 
-    input[type="number"],
+    input,
     textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-      resize: vertical;
-      font-size: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background-color: #f8fafc;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      transition: 0.2s ease;
+      opacity: 0;
     }
 
-    textarea:focus,
-    input:focus {
+    input:focus,
+    textarea:focus {
       outline: none;
-      border-color: #008cff;
-      box-shadow: 0 0 4px rgba(0, 140, 255, 0.3);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
     }
 
     button {
-      margin-top: 20px;
       width: 100%;
-      padding: 12px;
-      background-color: #008cff;
-      color: white;
-      font-size: 16px;
+      padding: 14px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
       border: none;
-      border-radius: 10px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #0070cc;
+      transition: transform 0.2s ease;
+      opacity: 0;
     }
 
     #status {
-      margin-top: 15px;
       text-align: center;
-      color: green;
-      font-weight: bold;
+      margin-top: 16px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      opacity: 0;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Insert Q&A Pair</h2>
-    <form id="qa-form">
-      <label for="id">ID:</label>
-      <input type="number" id="id" name="id" readonly>
+  <div class="blur-circle blur1"></div>
+  <div class="blur-circle blur2"></div>
 
-      <label for="question">Question:</label>
-      <textarea id="question" name="question" rows="3" required></textarea>
+  <div class="container">
+    <div class="glass-card">
+      <h2>Insert Q&A</h2>
+      <form id="qa-form">
+        <label for="id">ID:</label>
+        <input type="number" id="id" name="id" readonly />
 
-      <label for="answer">Answer:</label>
-      <textarea id="answer" name="answer" rows="3" required></textarea>
+        <label for="question">Question:</label>
+        <textarea id="question" name="question" rows="3" required></textarea>
 
-      <button type="submit">Submit</button>
-    </form>
-    <p id="status"></p>
+        <label for="answer">Answer:</label>
+        <textarea id="answer" name="answer" rows="3" required></textarea>
+
+        <button type="submit">Submit</button>
+      </form>
+      <p id="status"></p>
+    </div>
   </div>
 
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    gsap.from(".blur1", {
+      duration: 2,
+      opacity: 0,
+      x: -150,
+      y: -150,
+      ease: "power2.out"
+    });
+
+    gsap.from(".blur2", {
+      duration: 2,
+      opacity: 0,
+      x: 150,
+      y: 150,
+      ease: "power2.out",
+      delay: 0.3
+    });
+
+    gsap.to(".blur1", {
+      scale: 1.1,
+      repeat: -1,
+      yoyo: true,
+      duration: 5,
+      ease: "sine.inOut"
+    });
+
+    gsap.to(".blur2", {
+      scale: 1.1,
+      repeat: -1,
+      yoyo: true,
+      duration: 5,
+      ease: "sine.inOut"
+    });
+
+    gsap.to(".glass-card", {
+      duration: 1.2,
+      opacity: 1,
+      y: 0,
+      ease: "power3.out",
+      delay: 0.5
+    });
+
+    // Animate heading
+    gsap.to(".glass-card h2", {
+      duration: 1,
+      y: 0,
+      opacity: 1,
+      ease: "power2.out",
+      delay: 0.7
+    });
+
+    // Animate labels
+    gsap.to("label", {
+      opacity: 1,
+      y: 0,
+      stagger: 0.1,
+      duration: 1,
+      ease: "power2.out",
+      delay: 1
+    });
+
+    // Animate inputs, textarea, button
+    gsap.to(["input", "textarea", "button"], {
+      opacity: 1,
+      y: 0,
+      stagger: 0.2,
+      duration: 1,
+      ease: "power2.out",
+      delay: 1.4
+    });
+  </script>
+
+  <!-- Supabase Logic -->
   <script type="module">
     const SUPABASE_URL = 'https://kekgqjrueyoxlasfnnhl.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtla2dxanJ1ZXlveGxhc2ZubmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyODA4MTYsImV4cCI6MjA1OTg1NjgxNn0.SXyJzx5N8AqxSSFD858y-cSB5wUH7mmC4oXluJlZA6g';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtla2dxanJ1ZXlveGxhc2ZubmhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyODA4MTYsImV4cCI6MjA1OTg1NjgxNn0.SXyJzx5N8AqxSSFD858y-cSB5wUH7mmC4oXluJlZA6g'; // Replace with your actual key
 
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -117,9 +241,9 @@
         .limit(1);
 
       if (error) {
-        console.error("Error fetching ID:", error);
         statusText.textContent = "Error getting ID.";
         statusText.style.color = 'red';
+        gsap.to(statusText, { opacity: 1, y: -10 });
         return;
       }
 
@@ -136,18 +260,21 @@
       if (!question || !answer) {
         statusText.textContent = "Please fill both fields.";
         statusText.style.color = 'red';
+        gsap.fromTo(statusText, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6 });
         return;
       }
 
       const { error } = await supabase.from("qa_pairs").insert([{ id, question, answer }]);
 
       if (error) {
-        console.error("Insert error:", error);
         statusText.textContent = "Failed to insert data.";
         statusText.style.color = 'red';
+        gsap.fromTo(statusText, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6 });
       } else {
         statusText.textContent = "Inserted successfully!";
         statusText.style.color = 'green';
+        gsap.fromTo(statusText, { scale: 0.8, opacity: 0 }, { scale: 1.1, opacity: 1, duration: 0.5, ease: "bounce.out" });
+
         form.reset();
         getNextId();
       }
